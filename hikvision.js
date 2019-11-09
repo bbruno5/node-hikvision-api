@@ -47,8 +47,8 @@ hikvision.prototype.connect = function(options) {
 		handleData(self, data);
 	});
 
-	client.on('close', function() {		// Try to reconnect after 30s
-	    setTimeout(function() { self.connect(options) }, 30000 );
+	client.on('close', function() {		// Try to reconnect after 3s
+	    setTimeout(function() { self.connect(options) }, 3000 );
 		handleEnd(self);
 	});
 
