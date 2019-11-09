@@ -40,51 +40,45 @@ hikvision.prototype.connect = function(options) {
 		client.setKeepAlive(true,1000)
 		NetKeepAlive.setKeepAliveInterval(client,5000)	// sets TCP_KEEPINTVL to 5s
 		NetKeepAlive.setKeepAliveProbes(client, 12)	// 60s and kill the connection.
-        	handleConnection(self, options);
+        handleConnection(self, options);
 	});
 
 	client.on('data', function(data) {
-       		handleData(self, data)
+		handleData(self, data);
 	});
 
 	client.on('close', function() {		// Try to reconnect after 30s
-	        setTimeout(function() { self.connect(options) }, 30000 );
-		handleEnd(self)
+	    setTimeout(function() { self.connect(options) }, 30000 );
+		handleEnd(self);
 	});
 
 	client.on('error', function(err) {
-		handleError(self, err)
+		handleError(self, err);
 	});
 }
 
 // Get current Plate
-hikvision.prototype.getPlates = (ID) => {
+hikvision.prototype.getPlates = function(options) {
+	var self = this
+	let auth = "Basic " + new Buffer(options.user + ":" + options.pass).toString("base64");
+	let xmlRequest = "<AfterTime><picTime>0</picTime></AfterTime>";
 	// Get the current picture of license plate and its info
-	var plates = net.connect(options, () => {
-		var header = 'GET /ISAPI/Traffic/channels/' + ID + '/vehicleDetect/plates HTTP/1.1\r\n' +
-		'Host: ' + options.host + ':' + options.port + '\r\n' +
-		authHeader + '\r\n' + 
-		'Accept: multipart/x-mixed-replace\r\n\r\n';
-		client.write(header)
-		client.setKeepAlive(true, 1000)
-		handleConnection(this, options);
-	});
-	// On data, returns an event with results
-	plates.on('data', (data) => {
-		parser.parseString(data, function(err, result) {
-			if ((!err) && result) {
-				let data = {
-					"time": result['Plates']['Plate']['captureTime'][0],
-					"plate": result['Plates']['Plate']['plateNumber'][0],
-					"snapshot": result['Plates']['Plate']['picName'][0],
-					"country": result['Plates']['Plate']['country'][0]
-				};
-				this.emit("newPlate", data);
-			} else {
-				if (TRACE) console.log('    Skipped Event: ' + data );
-				this.emit("error", 'FAILED TO QUERY PLATE');
-			}
-		});
+	request({
+		method: 'POST',
+		url: BASEURI + '/ISAPI/Traffic/channels/' + options.id + '/vehicleDetect/plates',
+		headers:{
+			'Authorization': auth,
+			'Content-Type': 'application/xml'
+		},
+		body: xmlRequest
+	}, (err, res, body) => {
+		if (err) {
+			if (TRACE) console.log('    Skipped Event: ' + err );
+			self.emit("error", 'FAILED TO QUERY PLATE');
+		} else {
+			// Handle results
+			self.emit("newPlate", body);
+		}
 	});
 }
 
@@ -104,18 +98,18 @@ hikvision.prototype.ptzCommand = function (cmd,arg1,arg2,arg3,arg4) {
 
 // PTZ Preset - number
 hikvision.prototype.ptzPreset = function (preset) {
-    	var self = this;
+    var self = this;
 	if (isNaN(preset))	handleError(self,'INVALID PTZ PRESET');
 	request(BASEURI + '/cgi-bin/ptz.cgi?action=start&channel=0&code=GotoPreset&arg1=0&arg2=' + preset + '&arg3=0', function (error, response, body) {
 		if ((error) || (response.statusCode !== 200) || (body.trim() !== "OK")) {
 			self.emit("error", 'FAILED TO ISSUE PTZ PRESET');
 		}
-	})
+	});
 }
 
 // PTZ Zoom - multiplier
 hikvision.prototype.ptzZoom = function (multiple) {
-    	var self = this;
+    var self = this;
 	if (isNaN(multiple))	handleError(self,'INVALID PTZ ZOOM');
 	if (multiple > 0)	cmd = 'ZoomTele';
 	if (multiple < 0)	cmd = 'ZoomWide';
@@ -126,12 +120,12 @@ hikvision.prototype.ptzZoom = function (multiple) {
 			if (TRACE) 	console.log('FAILED TO ISSUE PTZ ZOOM');
 			self.emit("error", 'FAILED TO ISSUE PTZ ZOOM');
 		}
-	})
+	});
 }
 
 // PTZ Move - direction/action/speed
 hikvision.prototype.ptzMove = function (direction,action,speed) {
-    	var self = this;
+    var self = this;
 	if (isNaN(speed))	handleError(self,'INVALID PTZ SPEED');
 	if ((action !== 'start') || (action !== 'stop')) {
 		handleError(self,'INVALID PTZ COMMAND')
@@ -148,12 +142,12 @@ hikvision.prototype.ptzMove = function (direction,action,speed) {
 			self.emit("error", 'FAILED TO ISSUE PTZ UP COMMAND');
 			if (TRACE) 	console.log('FAILED TO ISSUE PTZ UP COMMAND');
 		}
-	})
+	});
 }
 
 // Request PTZ Status
 hikvision.prototype.ptzStatus = function () {
-    	var self = this;
+    var self = this;
 	request(BASEURI + '/cgi-bin/ptz.cgi?action=getStatus', function (error, response, body) {
 		if ((!error) && (response.statusCode === 200)) {
 			body = body.toString().split('\r\n').trim()
@@ -164,12 +158,12 @@ hikvision.prototype.ptzStatus = function () {
 			if (TRACE) 	console.log('FAILED TO QUERY STATUS');
 
 		}
-	})
+	});
 }
 
 // Switch to Day Profile
 hikvision.prototype.dayProfile = function () {
-    	var self = this;
+    var self = this;
 	request(BASEURI + '/cgi-bin/configManager.cgi?action=setConfig&VideoInMode[0].Config[0]=1', function (error, response, body) {
 		if ((!error) && (response.statusCode === 200)) {
 			if (body === 'Error') {		// Didnt work, lets try another method for older cameras
@@ -184,12 +178,12 @@ hikvision.prototype.dayProfile = function () {
 			self.emit("error", 'FAILED TO CHANGE TO DAY PROFILE');
 			if (TRACE) 	console.log('FAILED TO CHANGE TO DAY PROFILE');
 		}	
-	})
+	});
 }
 
 // Switch to Night Profile
 hikvision.prototype.nightProfile = function () {
-    	var self = this;
+    var self = this;
 	request(BASEURI + '/cgi-bin/configManager.cgi?action=setConfig&VideoInMode[0].Config[0]=2', function (error, response, body) {
 		if ((!error) && (response.statusCode === 200)) {
 			if (body === 'Error') {		// Didnt work, lets try another method for older cameras
@@ -204,7 +198,7 @@ hikvision.prototype.nightProfile = function () {
 			self.emit("error", 'FAILED TO CHANGE TO NIGHT PROFILE');
 			if (TRACE) 	console.log('FAILED TO CHANGE TO NIGHT PROFILE');
 		}	
-	})
+	});
 }
 
 // Handle alarms
@@ -294,7 +288,7 @@ function handleData(self, data) {
 // Handle connection
 function handleConnection(self, options) {
 	if (TRACE)	console.log('Connected to ' + options.host + ':' + options.port)
-    	//self.socket = socket;
+    //self.socket = socket;
 	self.emit("connect");
 }
 
