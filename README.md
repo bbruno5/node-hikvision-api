@@ -54,12 +54,12 @@ hikvision.on('alarm', (code, action, id) => {
 		hikvision.getPlates(options);
 		// So, wait for event with the result plate
 		hikvision.on('newPlate', (res) => {
-			this.emit("data", res);
+			console.log(res);
 		});
 		// Handles error
 		// Callback on error
 		hikvision.on('error', function(error){
-			this.emit("error", error);
+			console.log(error);
 		});
 	}
 });
