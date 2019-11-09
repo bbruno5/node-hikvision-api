@@ -77,7 +77,17 @@ hikvision.prototype.getPlates = function(options) {
 			self.emit("error", 'FAILED TO QUERY PLATE');
 		} else {
 			// Handle results
-			self.emit("newPlate", body);
+			parser.parseString(body, function(err, result) {
+				let i = (result['Plates']['Plate'].length - 1);
+				var data = {
+					"time": result['Plates']['Plate'][i]['captureTime'],
+					"plate": result['Plates']['Plate'][i]['plateNumber'],
+					"picture": result['Plates']['Plate'][i]['picName'],
+					"country": result['Plates']['Plate'][i]['country'],
+					"direction": result['Plates']['Plate'][i]['direction']
+				};
+				self.emit("newPlate", data);
+			});
 		}
 	});
 }
