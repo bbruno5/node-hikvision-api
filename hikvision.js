@@ -82,7 +82,7 @@ hikvision.prototype.getPlates = function(options) {
 				var data = {
 					"time": result['Plates']['Plate'][i]['captureTime'],
 					"plate": result['Plates']['Plate'][i]['plateNumber'],
-					"picture": result['Plates']['Plate'][i]['picName'],
+					"picture": BASEURI + '/doc/ui/images/plate/' + result['Plates']['Plate'][i]['picName'] + '.jpg',
 					"country": result['Plates']['Plate'][i]['country'],
 					"direction": result['Plates']['Plate'][i]['direction']
 				};
