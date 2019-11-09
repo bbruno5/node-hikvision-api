@@ -53,13 +53,8 @@ hikvision.on('alarm', (code, action, id) => {
 		options.id = id;
 		hikvision.getPlates(options);
 		// So, wait for event with the result plate
-		hikvision.on('newPlate', (res) => {
+		hikvision.once('newPlate', (res) => {
 			console.log(res);
-		});
-		// Handles error
-		// Callback on error
-		hikvision.on('error', function(error){
-			console.log(error);
 		});
 	}
 });
