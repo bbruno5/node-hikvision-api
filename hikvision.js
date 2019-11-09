@@ -57,6 +57,37 @@ hikvision.prototype.connect = function(options) {
 	});
 }
 
+// Get current Plate
+hikvision.prototype.getPlates = (ID) => {
+	// Get the current picture of license plate and its info
+	var plates = net.connect(options, () => {
+		var header = 'GET /ISAPI/Traffic/channels/' + ID + '/vehicleDetect/plates HTTP/1.1\r\n' +
+		'Host: ' + options.host + ':' + options.port + '\r\n' +
+		authHeader + '\r\n' + 
+		'Accept: multipart/x-mixed-replace\r\n\r\n';
+		client.write(header)
+		client.setKeepAlive(true, 1000)
+		handleConnection(this, options);
+	});
+	// On data, returns an event with results
+	plates.on('data', (data) => {
+		parser.parseString(data, function(err, result) {
+			if ((!err) && result) {
+				let data = {
+					"time": result['Plates']['Plate']['captureTime'][0],
+					"plate": result['Plates']['Plate']['plateNumber'][0],
+					"snapshot": result['Plates']['Plate']['picName'][0],
+					"country": result['Plates']['Plate']['country'][0]
+				};
+				this.emit("newPlate", data);
+			} else {
+				if (TRACE) console.log('    Skipped Event: ' + data );
+				this.emit("error", 'FAILED TO QUERY PLATE');
+			}
+		});
+	});
+}
+
 // Raw PTZ Command - command/arg1/arg2/arg3/arg4
 hikvision.prototype.ptzCommand = function (cmd,arg1,arg2,arg3,arg4) {
     	var self = this;
