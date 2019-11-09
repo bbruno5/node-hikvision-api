@@ -69,6 +69,9 @@ hikvision.dayProfile()
 // Switch Camera to Night Profile
 hikvision.nightProfile()
 
+// Gets last plate leiture from camera (This method returns only the last plate issued by the camera and it is not realtime. To get plates in real time see in example above)
+hikvision.getPlates(options)
+
 // Issue hikvision RAW PTZ Command (See API Manual in GitHub Wiki)
 hikvision.ptzCommand(cmd,arg1,arg2,arg3,arg4)
 
@@ -89,6 +92,9 @@ hikvision.ptzStatus()
 
 // Callback for any Alarm (Motion Detection/Video Loss & Blank/Alarm Inputs)
 hikvision.on('alarm', function(code,action,index){  });
+
+// Callback for getPlates
+hikvision.on('newPlate', function(data) {  });
 
 // Callback for PTZ Status
 hikvision.on('ptzStatus', function(data){  });
