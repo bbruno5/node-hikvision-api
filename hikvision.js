@@ -215,19 +215,24 @@ hikvision.prototype.nightProfile = function () {
 function handleData(self, data) {
 	parser.parseString(data, function(err, result) {
 		if (result) {
-			var code = result['EventNotificationAlert']['eventType'][0]
-			var action = result['EventNotificationAlert']['eventState'][0]
-			var index = parseInt(result['EventNotificationAlert']['channelID'][0])
-			var count = parseInt(result['EventNotificationAlert']['activePostCount'][0])
+			if (typeof result !== 'undefined') {
+				if (typeof result['EventNotificationAlert'] !== 'undefined') {
+					var code = result['EventNotificationAlert']['eventType'][0]
+					var action = result['EventNotificationAlert']['eventState'][0]
+					var index = parseInt(result['EventNotificationAlert']['channelID'][0])
+					var count = parseInt(result['EventNotificationAlert']['activePostCount'][0])
+				} else handleError(self, err);
+			} else handleError(self, err);
 
 			// give codes returned by camera prettier and standardized description
-			if (code === 'IO')            code = 'AlarmLocal';
-			if (code === 'VMD')           code = 'VideoMotion';
-			if (code === 'linedetection') code = 'LineDetection';
-			if (code === 'videoloss')     code = 'VideoLoss';
-			if (code === 'shelteralarm')  code = 'VideoBlind';
-			if (action === 'active')    action = 'Start'
-			if (action === 'inactive')  action = 'Stop'
+			if (code === 'IO')               code = 'AlarmLocal';
+			if (code === 'VMD')              code = 'VideoMotion';
+			if (code === 'linedetection')    code = 'LineDetection';
+			if (code === 'videoloss')        code = 'VideoLoss';
+			if (code === 'shelteralarm')     code = 'VideoBlind';
+			if (code === 'vehicledetection') code = 'VehicleDetection';
+			if (action === 'active')       action = 'Start'
+			if (action === 'inactive')     action = 'Stop'
 
 			// create and event identifier for each recieved event
 			// This allows multiple detection types with multiple indexes for DVR or multihead devices
