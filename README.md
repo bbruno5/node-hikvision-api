@@ -46,6 +46,24 @@ hikvision.on('alarm', function(code,action,index) {
 	if (code === 'VideoBlind'       && action === 'Stop')   console.log(getDateTime() + ' Channel ' + index + ': Video Unblind!')
 });
 
+// Get realtime license plate recognition
+hikvision.on('alarm', (code, action, id) => {
+	if (code === 'VehicleDetection' && action === 'Start') {
+		// On motion alarm, try to get a possible vehicle plate
+		options.id = id;
+		hikvision.getPlates(options);
+		// So, wait for event with the result plate
+		hikvision.on('newPlate', (res) => {
+			this.emit("data", res);
+		});
+		// Handles error
+		// Callback on error
+		hikvision.on('error', function(error){
+			this.emit("error", error);
+		});
+	}
+});
+
 function getDateTime() {
 	var date = new Date();
 	var hour = date.getHours();
