@@ -32,16 +32,18 @@ hikvision.ptzPreset(10)
 
 // Monitor Camera Alarms
 hikvision.on('alarm', function(code,action,index) {
-	if (code === 'VideoMotion'   && action === 'Start')  console.log(getDateTime() + ' Channel ' + index + ': Video Motion Detected')
-	if (code === 'VideoMotion'   && action === 'Stop')   console.log(getDateTime() + ' Channel ' + index + ': Video Motion Ended')
-	if (code === 'LineDetection' && action === 'Start')  console.log(getDateTime() + ' Channel ' + index + ': Line Cross Detected')
-	if (code === 'LineDetection' && action === 'Stop')   console.log(getDateTime() + ' Channel ' + index + ': Line Cross Ended')
-	if (code === 'AlarmLocal'    && action === 'Start')  console.log(getDateTime() + ' Channel ' + index + ': Local Alarm Triggered: ' + index)
-	if (code === 'AlarmLocal'    && action === 'Stop')   console.log(getDateTime() + ' Channel ' + index + ': Local Alarm Ended: ' + index)
-	if (code === 'VideoLoss'     && action === 'Start')  console.log(getDateTime() + ' Channel ' + index + ': Video Lost!')
-	if (code === 'VideoLoss'     && action === 'Stop')   console.log(getDateTime() + ' Channel ' + index + ': Video Found!')
-	if (code === 'VideoBlind'    && action === 'Start')  console.log(getDateTime() + ' Channel ' + index + ': Video Blind!')
-	if (code === 'VideoBlind'    && action === 'Stop')   console.log(getDateTime() + ' Channel ' + index + ': Video Unblind!')
+	if (code === 'VideoMotion'      && action === 'Start')  console.log(getDateTime() + ' Channel ' + index + ': Video Motion Detected')
+	if (code === 'VideoMotion'      && action === 'Stop')   console.log(getDateTime() + ' Channel ' + index + ': Video Motion Ended')
+	if (code === 'VehicleDetection' && action === 'Start')  console.log(getDateTime() + ' Channel ' + index + ': Video Motion Ended')
+	if (code === 'VehicleDetection' && action === 'Stop')   console.log(getDateTime() + ' Channel ' + index + ': Video Motion Ended')
+	if (code === 'LineDetection'    && action === 'Start')  console.log(getDateTime() + ' Channel ' + index + ': Line Cross Detected')
+	if (code === 'LineDetection'    && action === 'Stop')   console.log(getDateTime() + ' Channel ' + index + ': Line Cross Ended')
+	if (code === 'AlarmLocal'       && action === 'Start')  console.log(getDateTime() + ' Channel ' + index + ': Local Alarm Triggered: ' + index)
+	if (code === 'AlarmLocal'       && action === 'Stop')   console.log(getDateTime() + ' Channel ' + index + ': Local Alarm Ended: ' + index)
+	if (code === 'VideoLoss'        && action === 'Start')  console.log(getDateTime() + ' Channel ' + index + ': Video Lost!')
+	if (code === 'VideoLoss'        && action === 'Stop')   console.log(getDateTime() + ' Channel ' + index + ': Video Found!')
+	if (code === 'VideoBlind'       && action === 'Start')  console.log(getDateTime() + ' Channel ' + index + ': Video Blind!')
+	if (code === 'VideoBlind'       && action === 'Stop')   console.log(getDateTime() + ' Channel ' + index + ': Video Unblind!')
 });
 
 function getDateTime() {
