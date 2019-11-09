@@ -1,11 +1,12 @@
 {
   "name": "node-hikvision-api",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Hikvision HTTP API Module",
   "main": "hikvision.js",
   "dependencies": {
-    "xml2js": "^0.4.16",
-    "net-keepalive": "^0.3.3"
+    "xml2js": "^0.4.22",
+    "net-keepalive": "^1.2.1",
+    "request": "^2.88.0"
   },
   "devDependencies": {},
   "scripts": {
@@ -13,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nayrnet/node-hikvision-api.git"
+    "url": "git+https://github.com/bbruno51/node-hikvision-api.git"
   },
   "keywords": [
     "Hikvision",
@@ -22,12 +23,13 @@
     "PTZ",
     "IPC",
     "Security Camera",
-    "Home Automation"
+    "Home Automation",
+    "License Plate Recognition"
   ],
-  "author": "Ryan Hunt",
+  "author": "bbruno5; Ryan Hunt",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/nayrnet/node-hikvision-api/issues"
+    "url": "https://github.com/bbruno51/node-hikvision-api/issues"
   },
-  "homepage": "https://github.com/nayrnet/node-hikvision-api#readme"
+  "homepage": "https://github.com/bbruno51/node-hikvision-api#readme"
 }
