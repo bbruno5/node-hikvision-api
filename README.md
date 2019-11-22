@@ -78,7 +78,7 @@ function getDateTime() {
 
 ## Functions:
 ```javascript
-// Switch Camera to Night Profile
+// Switch Camera to Day Profile
 hikvision.dayProfile()
 
 // Switch Camera to Night Profile
