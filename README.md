@@ -24,7 +24,7 @@ var options = {
 
 var hikvision 	= new ipcamera.hikvision(options);
 
-// Switch to Day Profile
+// Switch to Night Profile
 hikvision.nightProfile()
 
 // PTZ Go to preset 10
